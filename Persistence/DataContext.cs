@@ -10,6 +10,7 @@ namespace Persistence
         }
 
         public DbSet<Value> TValue { get; set; }
+        public DbSet<TodoList> TTodoList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

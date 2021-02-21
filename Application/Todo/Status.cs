@@ -1,0 +1,42 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
+using Persistence;
+
+namespace Application.Todo
+{
+    public class Status
+    {
+        public class Command : IRequest
+        {
+            public Guid Id { get; set; }
+            public string Status { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Command>
+        {
+            private readonly DataContext _context;
+            public Handler(DataContext context)
+            {
+                _context = context;
+            }
+
+            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            {
+                var todo = await _context.TTodoList.FindAsync(request.Id);
+
+                if (todo == null)
+                    throw new Exception("Could not find task");
+
+                todo.Status = request.Status ?? todo.Status;
+
+                var success = await _context.SaveChangesAsync() > 0;
+
+                if (success) return Unit.Value;
+
+                throw new Exception("Problem saving changes status");
+            }
+        }
+    }
+}
