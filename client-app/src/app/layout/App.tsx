@@ -6,15 +6,24 @@ import { TodoDashboard } from "../../features/todos/dashboard/TodoDashboard";
 import { ITodo } from "../models/todo";
 
 const App = () => {
-  const [todos, setTodo] = useState<ITodo[]>([]);
+  const [toDos, setTodos] = useState<ITodo[]>([]);
+  const [selectedToDo, setSelectedTodo] = useState<ITodo | null>(null);
 
   const handleCreateTodo = (todo: ITodo) => {
-    setTodo([...todos, todo]);
+    setTodos([...toDos, todo]);
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    setTodos([...toDos.filter((a) => a.id !== id)]);
+  };
+
+  const handleCompleteTodo = (toDo: ITodo) => {
+    setTodos([...toDos.filter(a => a.id !== toDo.id), toDo])
   };
 
   useEffect(() => {
     axios.get<ITodo[]>("http://localhost:5000/api/todos").then((response) => {
-      setTodo(response.data);
+      setTodos(response.data);
     });
   }, []);
 
@@ -22,7 +31,12 @@ const App = () => {
     <Fragment>
       <NavBar />
       <Container style={{ marginTop: "7em" }}>
-        <TodoDashboard todos={todos} createTodo={handleCreateTodo} />
+        <TodoDashboard
+          toDos={toDos}
+          deleteTodo={handleDeleteTodo}
+          createTodo={handleCreateTodo}
+          completeTodo={handleCompleteTodo}
+        />
       </Container>
     </Fragment>
   );

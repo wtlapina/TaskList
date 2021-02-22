@@ -46,7 +46,7 @@ const TodoForm: React.FC<IProps> = ({ createTodo }) => {
           floated="right"
           positive
           type="submit"
-          content="Save"
+          content="Add Item"
         />
       </Form>
     </Segment>
