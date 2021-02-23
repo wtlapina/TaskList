@@ -1,31 +1,63 @@
 import axios from "axios";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, SyntheticEvent, useEffect, useState } from "react";
 import { Container } from "semantic-ui-react";
+import { getAllJSDocTagsOfKind } from "typescript";
 import { NavBar } from "../../features/nav/NavBar";
 import { TodoDashboard } from "../../features/todos/dashboard/TodoDashboard";
+import agent from "../api/agent";
 import { ITodo } from "../models/todo";
+import LoadingComponent from "./LoadingComponent";
 
 const App = () => {
   const [toDos, setTodos] = useState<ITodo[]>([]);
-  const [selectedToDo, setSelectedTodo] = useState<ITodo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [target, setTarget] = useState("");
+  //const [selectedToDo, setSelectedTodo] = useState<ITodo | null>(null);
 
-  const handleCreateTodo = (todo: ITodo) => {
-    setTodos([...toDos, todo]);
+  const handleCreateTodo = (buttonName: string, todo: ITodo) => {
+    setSubmitting(true);
+    setTarget(buttonName);
+    agent.ToDos.create(todo)
+      .then(() => {
+        setTodos([...toDos, todo]);
+      })
+      .then(() => setSubmitting(false));
   };
 
-  const handleDeleteTodo = (id: string) => {
-    setTodos([...toDos.filter((a) => a.id !== id)]);
+  const handleDeleteTodo = (
+    event: SyntheticEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    setSubmitting(true);
+    setTarget(event.currentTarget.name);
+    agent.ToDos.delete(id)
+      .then(() => {
+        setTodos([...toDos.filter((a) => a.id !== id)]);
+      })
+      .then(() => setSubmitting(false));
   };
 
-  const handleCompleteTodo = (toDo: ITodo) => {
-    setTodos([...toDos.filter(a => a.id !== toDo.id), toDo])
+  const handleCompleteTodo = (
+    event: SyntheticEvent<HTMLButtonElement>,
+    toDo: ITodo
+  ) => {
+    setSubmitting(true);
+    setTarget(event.currentTarget.name);
+    agent.ToDos.complete(toDo).then(() => {
+      setTodos([...toDos.filter((a) => a.id !== toDo.id), toDo]);
+    }).then(() => setSubmitting(false));
   };
 
   useEffect(() => {
-    axios.get<ITodo[]>("http://localhost:5000/api/todos").then((response) => {
-      setTodos(response.data);
-    });
+    agent.ToDos.list()
+      .then((response) => {
+        setTodos(response);
+      })
+      .then(() => setLoading(false));
   }, []);
+
+  if (loading) return <LoadingComponent content="Loading To Dos..." />;
 
   return (
     <Fragment>
@@ -36,6 +68,8 @@ const App = () => {
           deleteTodo={handleDeleteTodo}
           createTodo={handleCreateTodo}
           completeTodo={handleCompleteTodo}
+          submitting={submitting}
+          target={target}
         />
       </Container>
     </Fragment>

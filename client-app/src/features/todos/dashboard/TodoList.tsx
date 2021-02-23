@@ -1,22 +1,35 @@
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { Button, Image, Item, Segment } from "semantic-ui-react";
 import { ITodo } from "../../../app/models/todo";
-import TodoForm from "../form/TodoForm";
 
 interface IProps {
   toDos: ITodo[];
-  deleteTodo: (id: string) => void;
-  completeTodo: (toDo: ITodo) => void;
+  deleteTodo: (e: SyntheticEvent<HTMLButtonElement>, id: string) => void;
+  completeTodo: (e: SyntheticEvent<HTMLButtonElement>, toDo: ITodo) => void;
+  target: string;
+  submitting: boolean;
 }
 
 const TodoList: React.FC<IProps> = ({
   toDos,
   deleteTodo,
-  completeTodo
+  completeTodo,
+  submitting,
+  target,
 }) => {
-  const handleComplete = (id: string) => {
-    let toDoz = {...toDos.filter((a) => a.id === id)[0], status: "Completed"};
-    completeTodo(toDoz);
+  const handleComplete = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+    let toDoz = { ...toDos.filter((a) => a.id === id)[0], status: "Completed" };
+    completeTodo(event, toDoz);
+    console.log(toDoz);
+  };
+
+  const handleIsCompleteStyle = (status: string) => {
+    let className = "";
+    if (status === "Completed") {
+      className = "crossed-line";
+    }
+
+    return className;
   };
 
   return (
@@ -25,25 +38,28 @@ const TodoList: React.FC<IProps> = ({
         {toDos.map((toDo) => (
           <Item key={toDo.id}>
             <Item.Content>
-              <Item.Header
-                className={toDo.status === "Completed" ? "crossed-line" : ""}
-              >
+              <Item.Header className={handleIsCompleteStyle(toDo.status)}>
                 {toDo.taskName} {toDo.status}
               </Item.Header>
               <Item.Extra>
                 <Button
-                  onClick={() => handleComplete(toDo.id)}
+                  onClick={(e) => handleComplete(e, toDo.id)}
                   size="mini"
                   floated="right"
                   content="Complete"
                   color="blue"
+                  name={toDo.id + 'complete'}
+                  loading={target === toDo.id + 'complete' && submitting}
                 />
+
                 <Button
-                  onClick={() => deleteTodo(toDo.id)}
+                  onClick={(e) => deleteTodo(e, toDo.id)}
                   size="mini"
                   floated="right"
                   content="Delete"
                   color="red"
+                  name={toDo.id + 'delete'}
+                  loading={target === toDo.id + 'delete' && submitting}
                 />
               </Item.Extra>
             </Item.Content>
