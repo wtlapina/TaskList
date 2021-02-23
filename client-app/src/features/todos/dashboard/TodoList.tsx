@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
-import { Button, Image, Item, Segment } from "semantic-ui-react";
+import { Button, Icon, Image, Item, Segment } from "semantic-ui-react";
 import { ITodo } from "../../../app/models/todo";
 
 interface IProps {
@@ -23,7 +23,6 @@ const TodoList: React.FC<IProps> = ({
   ) => {
     let toDoz = { ...toDos.filter((a) => a.id === id)[0], status: "Completed" };
     completeTodo(event, toDoz);
-    console.log(toDoz);
   };
 
   const handleIsCompleteStyle = (status: string) => {
@@ -65,20 +64,22 @@ const TodoList: React.FC<IProps> = ({
                     onClick={(e) => deleteTodo(e, toDo.id)}
                     size="mini"
                     floated="right"
-                    content="Delete"
                     color="red"
                     name={toDo.id + "delete"}
                     loading={target === toDo.id + "delete" && submitting}
+                    icon="trash"
+                    content="remove"
                   />
 
                   <Button
                     onClick={(e) => handleComplete(e, toDo.id)}
                     size="mini"
                     floated="right"
-                    content="Complete"
                     color="blue"
                     name={toDo.id + "complete"}
                     loading={target === toDo.id + "complete" && submitting}
+                    icon="check"
+                    content="Complete"
                   />
                 </div>
               </Item.Extra>

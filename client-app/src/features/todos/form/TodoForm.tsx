@@ -62,6 +62,7 @@ const TodoForm: React.FC<IProps> = ({ createTodo, submitting, target }) => {
           content="Add Item"
           name="addItem"
           loading={target === "addItem" && submitting}
+          icon="save"
         />
       </Form>
     </Segment>
