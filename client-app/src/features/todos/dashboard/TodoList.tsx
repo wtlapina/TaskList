@@ -17,7 +17,10 @@ const TodoList: React.FC<IProps> = ({
   submitting,
   target,
 }) => {
-  const handleComplete = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+  const handleComplete = (
+    event: SyntheticEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     let toDoz = { ...toDos.filter((a) => a.id === id)[0], status: "Completed" };
     completeTodo(event, toDoz);
     console.log(toDoz);
@@ -38,29 +41,46 @@ const TodoList: React.FC<IProps> = ({
         {toDos.map((toDo) => (
           <Item key={toDo.id}>
             <Item.Content>
+              <img
+                src="/assets/checkmark.png"
+                alt="logo"
+                style={{
+                  inlineSize: "20px",
+                  marginRight: "5px",
+                  visibility:
+                    toDo.status === "Completed" ? "visible" : "hidden",
+                }}
+              />
               <Item.Header className={handleIsCompleteStyle(toDo.status)}>
-                {toDo.taskName} {toDo.status}
+                {toDo.taskName}
               </Item.Header>
               <Item.Extra>
-                <Button
-                  onClick={(e) => handleComplete(e, toDo.id)}
-                  size="mini"
-                  floated="right"
-                  content="Complete"
-                  color="blue"
-                  name={toDo.id + 'complete'}
-                  loading={target === toDo.id + 'complete' && submitting}
-                />
+                <div
+                  style={{
+                    visibility:
+                      toDo.status === "Completed" ? "hidden" : "visible",
+                  }}
+                >
+                  <Button
+                    onClick={(e) => deleteTodo(e, toDo.id)}
+                    size="mini"
+                    floated="right"
+                    content="Delete"
+                    color="red"
+                    name={toDo.id + "delete"}
+                    loading={target === toDo.id + "delete" && submitting}
+                  />
 
-                <Button
-                  onClick={(e) => deleteTodo(e, toDo.id)}
-                  size="mini"
-                  floated="right"
-                  content="Delete"
-                  color="red"
-                  name={toDo.id + 'delete'}
-                  loading={target === toDo.id + 'delete' && submitting}
-                />
+                  <Button
+                    onClick={(e) => handleComplete(e, toDo.id)}
+                    size="mini"
+                    floated="right"
+                    content="Complete"
+                    color="blue"
+                    name={toDo.id + "complete"}
+                    loading={target === toDo.id + "complete" && submitting}
+                  />
+                </div>
               </Item.Extra>
             </Item.Content>
           </Item>
