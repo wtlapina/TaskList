@@ -1,4 +1,4 @@
-import React, { FormEvent, SyntheticEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { ITodo } from "../../../app/models/todo";
 import { v4 as uuid } from "uuid";

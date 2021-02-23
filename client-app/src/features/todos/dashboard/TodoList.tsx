@@ -1,5 +1,5 @@
-import React, { SyntheticEvent, useState } from "react";
-import { Button, Icon, Image, Item, Segment } from "semantic-ui-react";
+import React, { SyntheticEvent } from "react";
+import { Button, Item, Segment } from "semantic-ui-react";
 import { ITodo } from "../../../app/models/todo";
 
 interface IProps {
@@ -54,23 +54,22 @@ const TodoList: React.FC<IProps> = ({
                 {toDo.taskName}
               </Item.Header>
               <Item.Extra>
+                <Button
+                  onClick={(e) => deleteTodo(e, toDo.id)}
+                  size="mini"
+                  floated="right"
+                  color="red"
+                  name={toDo.id + "delete"}
+                  loading={target === toDo.id + "delete" && submitting}
+                  icon="trash"
+                  content="remove"
+                />
                 <div
                   style={{
                     visibility:
                       toDo.status === "Completed" ? "hidden" : "visible",
-                  }}
+                  float: "right"}}
                 >
-                  <Button
-                    onClick={(e) => deleteTodo(e, toDo.id)}
-                    size="mini"
-                    floated="right"
-                    color="red"
-                    name={toDo.id + "delete"}
-                    loading={target === toDo.id + "delete" && submitting}
-                    icon="trash"
-                    content="remove"
-                  />
-
                   <Button
                     onClick={(e) => handleComplete(e, toDo.id)}
                     size="mini"
